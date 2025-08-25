@@ -1,6 +1,10 @@
 import { createPartFromUri, createUserContent, GoogleGenAI } from "@google/genai";
 export default async function handler(req, res) {
 
+    if(req.header.origin !== "https://ali-amir-code.rf.gd"){
+        return res.status(403).send("Forbidden");
+    }
+
     const { query } = req.body;
 
     const ai = new GoogleGenAI({});
