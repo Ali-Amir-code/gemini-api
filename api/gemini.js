@@ -1,7 +1,7 @@
 import { createPartFromUri, createUserContent, GoogleGenAI } from "@google/genai";
 export default async function handler(req, res) {
 
-    if(req.header.origin !== "https://ali-amir-code.rf.gd"){
+    if(req.header.Origin !== "https://ali-amir-code.rf.gd"){
         return res.status(403).send("Forbidden");
     }
 
