@@ -4,5 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ali-Amir-code/gemini-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ali-Amir-code/gemini-api/issues"
+  },
+  "homepage": "https://github.com/Ali-Amir-code/gemini-api#readme",
+  "description": "",
+  "dependencies": {
+    "@google/genai": "^1.15.0"
   }
 }
