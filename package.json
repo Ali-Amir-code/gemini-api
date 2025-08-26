@@ -2,9 +2,7 @@
   "name": "vercel-hello",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "vercel dev"
-  },
+  "scripts": {},
   "type": "module",
   "repository": {
     "type": "git",
@@ -19,6 +17,7 @@
   "homepage": "https://github.com/Ali-Amir-code/gemini-api#readme",
   "description": "",
   "dependencies": {
-    "@google/genai": "^1.15.0"
+    "@google/genai": "^1.15.0",
+    "cors": "^2.8.5"
   }
 }

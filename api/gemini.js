@@ -1,15 +1,23 @@
-import { createPartFromUri, createUserContent, GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 export default async function handler(req, res) {
 
-    if(req.header.Origin !== "https://ali-amir-code.rf.gd"){
-        return res.status(403).send("Forbidden");
-    }
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Or your frontend URL
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-vercel-protection-bypass");
 
-    const { query } = req.body;
+  if(req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-    const ai = new GoogleGenAI({});
+  if(req.method !== 'POST') {
+    return res.status(405).json({ error: 'Not allowed' });
+  }
 
-    const data = `
+  const { query } = req.body;
+
+  const ai = new GoogleGenAI({});
+
+  const data = `
     {
   "personalInfo": {
     "fullName": "Ali Amir",
@@ -242,20 +250,20 @@ export default async function handler(req, res) {
  `;
 
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: `
         Query: ${query}
         Return: A single concise, natural, accurate answer (1–3 short paragraphs). If the draft lacks necessary info, return exactly: Sorry! I am unable to understand your question. Please contact Ali Amir directly at muhammadaliamir24@gmail.com.
         `,
-        config: {
-            thinkingConfig: {
-                thinkingBudget: 0, // Disables thinking
-            },
-            temperature: 0.2,
-            systemInstruction: `You are a personal ai assistant of Ali Amir and is hosted on his website. Your primary task is to assist website visitors by answering their queries on Ali Amir\'s behalf. Here is all the data about Ali Amir. DATA: ${data}\nUse ONLY given information. Do NOT invent facts. Output ONLY the final answer text — no JSON, no commentary, nothing else.`
-        }
-    });
+    config: {
+      thinkingConfig: {
+        thinkingBudget: 0, // Disables thinking
+      },
+      temperature: 0.2,
+      systemInstruction: `You are a personal ai assistant of Ali Amir and is hosted on his website. Your primary task is to assist website visitors by answering their queries on Ali Amir\'s behalf with light humor. Here is all the data about Ali Amir. DATA: ${data}\nUse ONLY given information. Do NOT invent facts. Output ONLY the final answer text — no JSON, no commentary, nothing else.`
+    }
+  });
 
-    res.status(200).json({ message: response.text, "reqest.header": req.header });
+  res.status(200).json({ message: response.text, "reqest.header": req.header });
 }
