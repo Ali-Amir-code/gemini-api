@@ -1,23 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
 export default async function handler(req, res) {
 
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Or your frontend URL
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-vercel-protection-bypass");
-
-  if(req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if(req.method !== 'POST') {
+  if (req.method !== 'POST' && req.method !== 'OPTIONS') {
     return res.status(405).json({ error: 'Not allowed' });
   }
+  try {
 
-  const { query } = req.body;
+    const { query } = req.body;
+    const { GoogleGenAI } = await import('@google/genai');
 
-  const ai = new GoogleGenAI({});
+    const ai = new GoogleGenAI({});
 
-  const data = `
+    const data = `
     {
   "personalInfo": {
     "fullName": "Ali Amir",
@@ -74,7 +67,7 @@ export default async function handler(req, res) {
         "companyWebsite": "https://www.hightechsba.com/",
         "companyEmail": "hightechsba@gmail.com",
         "companyContact": "+923098038363"
-      },
+        },
       "startDate": "2025-06-01",
       "endDate": "2025-08-31",
       "duration": "2 months",
@@ -84,7 +77,7 @@ export default async function handler(req, res) {
         "Implemented RESTful API for book managment and review system",
         "Implemented RESTful API for blog managment and comment system",
         "Implemented RESTful API for Role Based Access Control (RBAC)"
-      ],
+        ],
       "summary": "During internship at High Tech, I learned a lot of things like RESTful API, JWT tokens, RBAC, OAuth, and more. I also implemented a blog managment system with comments and reviews system. I also learned many language specific backend concepts like 'middlewares in ExpressJS', 'JsonWebToken', 'Password Hashing using Bcrypt' etc."
     }
   ],
@@ -187,7 +180,7 @@ export default async function handler(req, res) {
     "whatsappNumber": "+923094957856",
     "github": "https://github.com/ali-amir-code/",
     "personalWebsite": "https://ali-amir-code.rf.gd/"
-  },
+    },
   "faqs": [
     {
       "question": "Who are you / what's your role?",
@@ -196,11 +189,11 @@ export default async function handler(req, res) {
     {
       "question": "What services do you offer?",
       "answer": "I build responsive websites, single-page apps, REST APIs, and desktop apps — plus maintenance and performance tuning."
-    },
+      },
     {
       "question": "Can I see your projects or portfolio?",
       "answer": "Sure — here’s my portfolio: 'https://ali-amir-code.rf.gd'. Contact me if you want a project demo or code link?"
-    },
+      },
     {
       "question": "Do you have GitHub or source code I can review?",
       "answer": "Yes — check my repos at https://github.com/ali-amir-code."
@@ -228,11 +221,11 @@ export default async function handler(req, res) {
     {
       "question": "Do you provide maintenance after launch?",
       "answer": "Yes — I offer support and maintenance packages (bug fixes, updates, small features). Ask for options and pricing."
-    },
+      },
     {
       "question": "Can you build a demo / proof-of-concept?",
       "answer": "Yes — I can deliver a focused POC to validate features and UX. Let me know the must-have features."
-    },
+      },
     {
       "question": "Do you write tests and documentation?",
       "answer": "Yes — I include unit/integration tests where appropriate and deliver basic README docs and deployment notes."
@@ -250,20 +243,23 @@ export default async function handler(req, res) {
  `;
 
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: `
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `
         Query: ${query}
         Return: A single concise, natural, accurate answer (1–3 short paragraphs). If the draft lacks necessary info, return exactly: Sorry! I am unable to understand your question. Please contact Ali Amir directly at muhammadaliamir24@gmail.com.
         `,
-    config: {
-      thinkingConfig: {
-        thinkingBudget: 0, // Disables thinking
-      },
-      temperature: 0.2,
-      systemInstruction: `You are a personal ai assistant of Ali Amir and is hosted on his website. Your primary task is to assist website visitors by answering their queries on Ali Amir\'s behalf with light humor. Here is all the data about Ali Amir. DATA: ${data}\nUse ONLY given information. Do NOT invent facts. Output ONLY the final answer text — no JSON, no commentary, nothing else.`
-    }
-  });
+      config: {
+        thinkingConfig: {
+          thinkingBudget: 0, // Disables thinking
+        },
+        temperature: 0.2,
+        systemInstruction: `You are a personal ai assistant of Ali Amir and is hosted on his website. Your primary task is to assist website visitors by answering their queries on Ali Amir\'s behalf with light humor. Here is all the data about Ali Amir. DATA: ${data}\nUse ONLY given information. Do NOT invent facts. Output ONLY the final answer text — no JSON, no commentary, nothing else.`
+      }
+    });
 
-  res.status(200).json({ message: response.text, "reqest.header": req.header });
+    res.status(200).json({ message: response.text, "reqest.header": req.header });
+  } catch (e) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }
