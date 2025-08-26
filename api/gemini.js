@@ -1,5 +1,9 @@
 export default async function handler(req, res) {
 
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({ success: 'ok' });
+  }
+
   if (req.method !== 'POST' && req.method !== 'OPTIONS') {
     return res.status(405).json({ error: 'Not allowed' });
   }
